@@ -7,7 +7,7 @@ RUN go mod download
 
 RUN CGO_ENABLED=0 \
   GOOS=linux \
-  go build -o /dist/app ./cmd/app/main.go
+  go build -o /dist/app ./main.go
 
 RUN ls -la /dist/
 
