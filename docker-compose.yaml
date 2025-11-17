@@ -1,0 +1,10 @@
+name: home
+services:
+  home-svc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./config/config.yaml:/config/config.yaml
+    command: ["./dist/app", "-config", "/config/config.yaml"]
