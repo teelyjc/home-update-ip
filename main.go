@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"os"
 	"os/signal"
 	"strings"
@@ -149,8 +150,12 @@ func main() {
 	logger.SetupLogger()
 	defer zap.S().Sync()
 
+	var configPath string
+	flag.StringVar(&configPath, "config", "./config.yaml", "path to a config file")
+	flag.Parse()
+
 	zap.S().Info("loading a configuration")
-	cfg, err := LoadConfig("./config.yaml")
+	cfg, err := LoadConfig(configPath)
 	if err != nil {
 		zap.S().Fatal("error loads a config from file", zap.Error(err))
 	}
