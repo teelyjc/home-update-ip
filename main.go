@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
@@ -16,7 +17,6 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/zones"
 	"github.com/rdegges/go-ipify"
-	"github.com/robfig/cron/v3"
 
 	"github.com/teelyjc/home/internal/logger"
 )
@@ -165,17 +165,16 @@ func main() {
 
 	zap.S().Info("job is running, every 15 mins")
 
-	cron := cron.New()
-	cron.AddFunc("*/15 * * * * ", func() {
-		update(cfg, s)
-	})
-
-	go cron.Start()
+	go func() {
+		for {
+			update(s.config, new(s.config))
+			time.Sleep(15 * time.Minute)
+		}
+	}()
 
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-signals
 
 	zap.S().Info("running clean-up tasks..")
-	cron.Stop()
 }
